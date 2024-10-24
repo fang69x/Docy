@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "254035016391",
+    "project_id": "docy-f5275",
+    "storage_bucket": "docy-f5275.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:254035016391:android:69f9440d0e2a949280dce2",
+        "android_client_info": {
+          "package_name": "com.example.docy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDxgd6k-xjvePog_NvpHSdSGFirbmBoUIk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
