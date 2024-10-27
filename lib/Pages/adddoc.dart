@@ -177,6 +177,27 @@ class AddDocumentPage extends ConsumerWidget {
     }
   }
 
+// Method to handle uploading multiple files or entire folders
+  Future<void> uploadFilesOrFolder(BuildContext context, WidgetRef ref) async {
+    // Enable picking multiple files
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      allowMultiple: true,
+      type: FileType.any,
+      withData: false, // Ensures we get the path without file data in memory
+    );
+
+    if (result != null && result.files.isNotEmpty) {
+      for (var file in result.files) {
+        String? filePath = file.path;
+        if (filePath != null) {
+          await uploadToFirebase(context, filePath, ref); // Upload each file
+        }
+      }
+    } else {
+      _showDialog(context, 'Error', 'No files or folders selected.');
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
@@ -214,6 +235,15 @@ class AddDocumentPage extends ConsumerWidget {
                           DocTile(
                             name: "Add Multiple Files",
                             icon: const Icon(Icons.library_add_outlined),
+                            onTap: () async {
+                              await uploadMultipleFiles(
+                                  context, ref); // Start multiple files upload
+                            },
+                          ),
+                          const SizedBox(height: 16), // Space between tiles
+                          DocTile(
+                            name: "Add Folder",
+                            icon: const Icon(Icons.library_add_check_sharp),
                             onTap: () async {
                               await uploadMultipleFiles(
                                   context, ref); // Start multiple files upload
