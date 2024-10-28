@@ -1,14 +1,14 @@
 import 'package:docy/Pages/loginPage.dart';
 import 'package:docy/provider/app_state_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart'; // Import Riverpod
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart'; // Import ScreenUtil
 
 class Welcomepage extends ConsumerWidget {
   const Welcomepage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // You can read the app state to decide what to do or display
     ref.watch(appStateProvider);
 
     return Scaffold(
@@ -16,51 +16,49 @@ class Welcomepage extends ConsumerWidget {
       body: SingleChildScrollView(
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25.0),
+            padding: EdgeInsets.symmetric(horizontal: 25.0.w),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // Image/Icon at the top
                 Image.asset(
-                  'lib/images/Designer (1).jpeg', // Corrected the image path
-                  height: 500,
+                  'lib/images/Designer (1).jpeg',
+                  height: 300.h,
+                  width: 300.w,
                 ),
-                const SizedBox(height: 40),
+                SizedBox(height: 40.h), // Responsive spacing
 
                 // Title Text
-                const Text(
+                Text(
                   'Upload your Document for the Future',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: 26,
+                    fontSize: 20.sp, // Responsive font size
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: 20.h), // Responsive spacing
 
                 // Subtitle Text
-                const Text(
+                Text(
                   'Effortlessly store and access your documents anytime, ensuring they\'re always organized and secure.',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     color: Colors.grey,
-                    fontSize: 16,
+                    fontSize: 15.sp, // Responsive font size
                   ),
                 ),
-                const SizedBox(height: 60),
+                SizedBox(height: 60.h), // Responsive spacing
 
                 // Get Started Button
                 SizedBox(
                   width: double.infinity,
-                  height: 50,
+                  height: 50.h, // Responsive height
                   child: ElevatedButton(
                     onPressed: () {
-                      // Optionally authenticate the user here
-                      ref
-                          .read(appStateProvider.notifier)
-                          .authenticate(); // Call authenticate
+                      ref.read(appStateProvider.notifier).authenticate();
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -69,17 +67,17 @@ class Welcomepage extends ConsumerWidget {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          const Color(0xFFF4B342), // Golden button color
+                      backgroundColor: const Color(0xFFF4B342),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(25),
+                        borderRadius:
+                            BorderRadius.circular(25.r), // Responsive radius
                       ),
                     ),
-                    child: const Text(
+                    child: Text(
                       'Get Started',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 18,
+                        fontSize: 20.sp, // Responsive font size
                         fontWeight: FontWeight.bold,
                       ),
                     ),

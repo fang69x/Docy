@@ -1,6 +1,7 @@
 import 'package:docy/provider/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ProfilePage extends ConsumerWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -17,7 +18,7 @@ class ProfilePage extends ConsumerWidget {
       body: user == null // Check if the user is signed in
           ? Center(child: Text('No user signed in')) // Handle no user
           : Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: EdgeInsets.all(16.0.w),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -30,7 +31,7 @@ class ProfilePage extends ConsumerWidget {
                             : const AssetImage('lib/images/default_user.png')
                                 as ImageProvider,
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20.h),
 
                   // Display User's Name
                   Text(
@@ -40,7 +41,7 @@ class ProfilePage extends ConsumerWidget {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(height: 10.h),
 
                   // Display User's Email
                   Text(
@@ -50,7 +51,7 @@ class ProfilePage extends ConsumerWidget {
                       color: Colors.grey,
                     ),
                   ),
-                  const SizedBox(height: 30),
+                  SizedBox(height: 30.h),
 
                   // Logout Button
                   SizedBox(

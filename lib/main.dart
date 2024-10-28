@@ -6,6 +6,7 @@ import 'package:docy/provider/auth_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'Pages/loginPage.dart';
 
 void main() async {
@@ -22,23 +23,25 @@ class Docy extends ConsumerWidget {
     final user =
         ref.watch(authProvider); // Watch the auth provider for user state
 
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        iconTheme: const IconThemeData(
-          color: Color.fromARGB(255, 240, 194, 11),
-        ),
-      ),
-      // Check if user is logged in and navigate accordingly
-      home: user != null
-          ? const HomePage()
-          : const Welcomepage(), // Navigate based on user state
-      routes: {
-        '/login': (context) =>
-            LoginPage(), // Ensure LoginPage is properly referenced
-        '/signup': (context) =>
-            SignUpPage(), // Ensure SignUpPage is properly referenced
-        '/home': (context) => const HomePage(),
+    return ScreenUtilInit(
+      designSize: const Size(360, 690),
+      minTextAdapt: true,
+      builder: (context, child) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            iconTheme: const IconThemeData(
+              color: Color.fromARGB(255, 240, 194, 11),
+            ),
+          ),
+          // Check if user is logged in and navigate accordingly
+          home: user != null ? const HomePage() : const Welcomepage(),
+          routes: {
+            '/login': (context) => LoginPage(),
+            '/signup': (context) => SignUpPage(),
+            '/home': (context) => const HomePage(),
+          },
+        );
       },
     );
   }

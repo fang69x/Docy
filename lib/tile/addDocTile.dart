@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class DocTile extends StatelessWidget {
   const DocTile(
@@ -14,7 +15,7 @@ class DocTile extends StatelessWidget {
       child: Card(
         shadowColor: Theme.of(context).shadowColor,
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(16.0.w),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center, // Center vertically
             crossAxisAlignment:

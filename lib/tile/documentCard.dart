@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io'; // Import this for File
@@ -53,11 +54,11 @@ class ViewDocumentCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       elevation: 4,
       child: ListTile(
-        contentPadding: const EdgeInsets.all(16),
+        contentPadding: EdgeInsets.all(16.w),
         leading: CircleAvatar(
           radius: 30,
           backgroundColor: Colors.blue,
-          child: Icon(fileIcon, size: 30, color: Colors.white),
+          child: Icon(fileIcon, size: 30.w, color: Colors.white),
         ),
         title: Text(
           fileName,

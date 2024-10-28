@@ -9,6 +9,7 @@ import 'package:firebase_storage/firebase_storage.dart'; // Import Firebase stor
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:permission_handler/permission_handler.dart'; // Import permission_handler
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AddDocumentPage extends ConsumerWidget {
   const AddDocumentPage({Key? key}) : super(key: key);
@@ -34,7 +35,7 @@ class AddDocumentPage extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               const CircularProgressIndicator(),
-              const SizedBox(height: 20),
+              SizedBox(height: 20.h),
               Consumer(builder: (context, ref, child) {
                 final uploadState = ref
                     .watch(uploadProvider); // Access the provider using watch
@@ -206,7 +207,7 @@ class AddDocumentPage extends ConsumerWidget {
       ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(16.0), // Add padding around the content
+          padding: EdgeInsets.all(16.0.w),
           child: Column(
             children: [
               // Use Expanded for progress indicator to prevent overflow
@@ -218,11 +219,11 @@ class AddDocumentPage extends ConsumerWidget {
                           .watch(uploadProvider)
                           .progress, // Handle null safely
                     ),
-                    const SizedBox(height: 20), // Space before the tiles
+                    SizedBox(height: 20.h),
                     Expanded(
                       child: ListView(
                         children: [
-                          const SizedBox(height: 20), // Space before the tiles
+                          SizedBox(height: 20.h),
                           DocTile(
                             name: "Add File",
                             icon: const Icon(Icons.add),
@@ -231,7 +232,7 @@ class AddDocumentPage extends ConsumerWidget {
                                   context, ref); // Start single file upload
                             },
                           ),
-                          const SizedBox(height: 16), // Space between tiles
+                          SizedBox(height: 16.h),
                           DocTile(
                             name: "Add Multiple Files",
                             icon: const Icon(Icons.library_add_outlined),
@@ -240,7 +241,7 @@ class AddDocumentPage extends ConsumerWidget {
                                   context, ref); // Start multiple files upload
                             },
                           ),
-                          const SizedBox(height: 16), // Space between tiles
+                          SizedBox(height: 16.h), // Space between tiles
                           DocTile(
                             name: "Add Folder",
                             icon: const Icon(Icons.library_add_check_sharp),

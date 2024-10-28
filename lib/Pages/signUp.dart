@@ -4,6 +4,7 @@ import 'package:docy/provider/auth_provider.dart';
 import 'package:docy/Pages/homePage.dart';
 import 'package:docy/Pages/loginPage.dart';
 import 'package:docy/Pages/textform.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart'; // Import ScreenUtil
 
 class SignUpPage extends ConsumerWidget {
   final nameController = TextEditingController();
@@ -22,126 +23,137 @@ class SignUpPage extends ConsumerWidget {
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 60),
+          padding: EdgeInsets.symmetric(
+              horizontal: 30.w, vertical: 60.h), // Responsive padding
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 10),
-              const Center(
+              SizedBox(height: 10.h),
+              Center(
                 child: Icon(
                   Icons.person_add,
                   color: Color(0xFFF4B342),
-                  size: 80,
+                  size: 80.sp, // Responsive size
                 ),
               ),
-              const SizedBox(height: 5),
-              const Text(
+              SizedBox(height: 5.h),
+              Text(
                 'Create Account',
                 style: TextStyle(
-                  fontSize: 32,
+                  fontSize: 32.sp, // Responsive font size
                   fontWeight: FontWeight.bold,
                   color: Colors.black87,
                 ),
               ),
-              const SizedBox(height: 5),
-              const Text(
+              SizedBox(height: 5.h),
+              Text(
                 'Sign up to get started',
                 style: TextStyle(
-                  fontSize: 18,
+                  fontSize: 18.sp, // Responsive font size
                   color: Colors.grey,
                 ),
               ),
-              const SizedBox(height: 10),
+              SizedBox(height: 10.h),
 
               // Name Input
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10.w),
                 child: Text(
                   "Name",
-                  style: TextStyle(color: Colors.grey, fontSize: 14),
+                  style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 14.sp), // Responsive font size
                 ),
               ),
-              const SizedBox(height: 10),
+              SizedBox(height: 10.h),
               MyTextField(
                 controller: nameController,
                 hintText: "Enter full name",
                 obscureText: false,
                 prefixIcon: const Icon(Icons.person, color: Colors.grey),
               ),
-              const SizedBox(height: 10),
+              SizedBox(height: 10.h),
 
               // Phone Number Input
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10.w),
                 child: Text(
                   "Phone Number",
-                  style: TextStyle(color: Colors.grey, fontSize: 14),
+                  style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 14.sp), // Responsive font size
                 ),
               ),
-              const SizedBox(height: 10),
+              SizedBox(height: 10.h),
               MyTextField(
                 controller: phoneController,
                 hintText: "Enter phone number",
                 obscureText: false,
                 prefixIcon: const Icon(Icons.phone, color: Colors.grey),
               ),
-              const SizedBox(height: 10),
+              SizedBox(height: 10.h),
 
               // Email Input
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10.w),
                 child: Text(
                   "Email",
-                  style: TextStyle(color: Colors.grey, fontSize: 14),
+                  style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 14.sp), // Responsive font size
                 ),
               ),
-              const SizedBox(height: 10),
+              SizedBox(height: 10.h),
               MyTextField(
                 controller: emailController,
                 hintText: "Enter email",
                 obscureText: false,
                 prefixIcon: const Icon(Icons.email, color: Colors.grey),
               ),
-              const SizedBox(height: 10),
+              SizedBox(height: 10.h),
 
               // Password Input
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10.w),
                 child: Text(
                   "Password",
-                  style: TextStyle(color: Colors.grey, fontSize: 14),
+                  style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 14.sp), // Responsive font size
                 ),
               ),
-              const SizedBox(height: 10),
+              SizedBox(height: 10.h),
               MyTextField(
                 controller: passwordController,
                 hintText: "Enter password",
                 obscureText: true,
                 prefixIcon: const Icon(Icons.lock, color: Colors.grey),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: 20.h),
 
               // Confirm Password Input
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10.w),
                 child: Text(
                   "Confirm Password",
-                  style: TextStyle(color: Colors.grey, fontSize: 14),
+                  style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 14.sp), // Responsive font size
                 ),
               ),
-              const SizedBox(height: 10),
+              SizedBox(height: 10.h),
               MyTextField(
                 controller: confirmPasswordController,
                 hintText: "Re-enter password",
                 obscureText: true,
                 prefixIcon: const Icon(Icons.lock, color: Colors.grey),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: 20.h),
 
               // Sign Up Button
               SizedBox(
                 width: double.maxFinite,
-                height: 50,
+                height: 50.h, // Responsive height
                 child: ElevatedButton(
                   onPressed: () async {
                     try {
@@ -163,27 +175,29 @@ class SignUpPage extends ConsumerWidget {
                     }
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        const Color(0xFFF4B342), // Add button color
+                    backgroundColor: const Color(0xFFF4B342), // Button color
                     shape: RoundedRectangleBorder(
                       borderRadius:
-                          BorderRadius.circular(10), // Add rounded corners
+                          BorderRadius.circular(10), // Rounded corners
                     ),
                   ),
-                  child: const Text(
+                  child: Text(
                     'Sign Up',
-                    style: TextStyle(color: Colors.white, fontSize: 20),
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20.sp), // Responsive font size
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              SizedBox(height: 20.h),
 
               // Already have an account? Login link
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text("Already have an account?",
-                      style: TextStyle(fontSize: 14)),
+                  Text("Already have an account?",
+                      style:
+                          TextStyle(fontSize: 14.sp)), // Responsive font size
                   TextButton(
                     onPressed: () {
                       Navigator.pushReplacement(
@@ -191,7 +205,7 @@ class SignUpPage extends ConsumerWidget {
                         MaterialPageRoute(builder: (context) => LoginPage()),
                       );
                     },
-                    child: const Text(
+                    child: Text(
                       " Login",
                       style: TextStyle(color: Color(0xFFF4B342)),
                     ),
