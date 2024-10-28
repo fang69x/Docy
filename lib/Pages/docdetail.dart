@@ -2,8 +2,6 @@ import 'package:docy/Pages/scan_doc.dart';
 import 'package:docy/Pages/upload_doc.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:docy/Pages/profile.dart';
-import 'package:docy/Pages/scan.dart';
 import 'package:docy/Pages/loginPage.dart';
 import 'package:docy/tile/homepagetile.dart';
 import 'package:flutter/material.dart';

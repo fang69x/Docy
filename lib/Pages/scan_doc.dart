@@ -13,26 +13,25 @@ class ScannedDocuments extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Watch the scanned documents provider
-    final scannedDocuments = ref.watch(scannedDocumentsProvider);
+    ref.watch(scannedDocumentsProvider);
 
-    // Fetching uploaded documents directly from Firestore
     Future<List<Map<String, dynamic>>> _getUserDocuments() async {
       User? user = FirebaseAuth.instance.currentUser;
       if (user == null)
         return []; // Return an empty list if no user is logged in
 
-      // Reference the user's specific document collection path
       QuerySnapshot snapshot = await FirebaseFirestore.instance
           .collection('users')
           .doc(user.uid)
           .collection('documents')
-          .orderBy('timestamp',
-              descending: true) // Optional: Order by timestamp
+          .orderBy('timestamp', descending: true)
           .get();
 
       return snapshot.docs
-          .map((doc) => doc.data() as Map<String, dynamic>)
+          .map((doc) => {
+                ...doc.data() as Map<String, dynamic>,
+                'id': doc.id, // Include the document ID
+              })
           .toList();
     }
 
@@ -47,9 +46,20 @@ class ScannedDocuments extends ConsumerWidget {
         await OpenFile.open(filePath);
       } catch (e) {
         print('Error downloading file: $e');
-        // Optionally show an error message to the user
       }
     }
+
+    // Future<void> deleteDocument(String documentId) async {
+    //   User? user = FirebaseAuth.instance.currentUser;
+    //   if (user != null) {
+    //     await FirebaseFirestore.instance
+    //         .collection('users')
+    //         .doc(user.uid)
+    //         .collection('documents')
+    //         .doc(documentId)
+    //         .delete();
+    //   }
+    // }
 
     return Scaffold(
       appBar: AppBar(
@@ -75,16 +85,55 @@ class ScannedDocuments extends ConsumerWidget {
               final fileName = document['fileName'];
               final downloadUrl = document['downloadUrl'];
               final fileExtension = fileName.split('.').last.toLowerCase();
+              final documentId = document['id']; // Get the document ID
 
               return ViewDocumentCard(
-                fileName: fileName,
-                fileExtension: fileExtension,
-                downloadUrl: downloadUrl,
-                onDownload: () {
-                  downloadFile(
-                      downloadUrl, fileName); // Call the download function
-                },
-              );
+                  fileName: fileName,
+                  fileExtension: fileExtension,
+                  downloadUrl: downloadUrl,
+                  onDownload: () {
+                    downloadFile(downloadUrl, fileName);
+                  },
+                  onDelete: () async {
+                    // Show confirmation dialog before deletion
+                    final confirmDelete = await showDialog<bool>(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('Confirm Deletion'),
+                        content: const Text(
+                            'Are you sure you want to delete this document?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(false),
+                            child: const Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(true),
+                            child: const Text('Delete'),
+                          ),
+                        ],
+                      ),
+                    );
+
+                    // If confirmed, delete the document
+                    if (confirmDelete == true) {
+                      // Ensure you are using the provider correctly
+                      await ref
+                          .read(scannedDocumentsProvider.notifier)
+                          .deleteDocument(documentId);
+
+                      // Optionally, refresh the documents
+                      await ref
+                          .read(scannedDocumentsProvider.notifier)
+                          .fetchScannedDocuments();
+
+                      // Show success message
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text('Document deleted successfully.')),
+                      );
+                    }
+                  });
             },
           );
         },

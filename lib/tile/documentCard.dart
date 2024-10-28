@@ -10,6 +10,7 @@ class ViewDocumentCard extends StatelessWidget {
   final String downloadUrl;
   final String fileExtension;
   final VoidCallback onDownload;
+  final VoidCallback onDelete; // Corrected to VoidCallback
 
   const ViewDocumentCard({
     super.key,
@@ -17,6 +18,7 @@ class ViewDocumentCard extends StatelessWidget {
     required this.fileExtension,
     required this.onDownload,
     required this.downloadUrl,
+    required this.onDelete, // Added onDelete parameter
   });
 
   @override
@@ -45,7 +47,6 @@ class ViewDocumentCard extends StatelessWidget {
       case 'png':
         fileIcon = Icons.image; // Image file icon
         break;
-
       default:
         fileIcon = Icons.insert_drive_file; // Generic file icon
     }
@@ -64,11 +65,18 @@ class ViewDocumentCard extends StatelessWidget {
           fileName,
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
-        trailing: IconButton(
-          icon: const Icon(Icons.download),
-          onPressed: () {
-            onDownload(); // Call the download function when pressed
-          },
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: const Icon(Icons.download),
+              onPressed: onDownload, // Call the download function when pressed
+            ),
+            IconButton(
+              icon: const Icon(Icons.delete),
+              onPressed: onDelete, // Call the delete function when pressed
+            ),
+          ],
         ),
         onTap: () async {
           // When tapping on the card, open the document

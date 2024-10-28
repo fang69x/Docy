@@ -68,6 +68,26 @@ class ScannedDocumentsNotifier
     }
   }
 
+  Future<void> deleteDocument(String documentId) async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      try {
+        // Delete the document from Firestore
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .collection('documents')
+            .doc(documentId)
+            .delete();
+
+        // Remove the document from the local state immediately
+        state = state.where((doc) => doc['id'] != documentId).toList();
+      } catch (e) {
+        print('Error deleting document: $e');
+      }
+    }
+  }
+
   Future<void> addDocument(File file, {bool isScanned = false}) async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
@@ -118,10 +138,6 @@ class ScannedDocumentsNotifier
       uploadNotifier.setError();
       print('Error uploading document: $e');
     }
-  }
-
-  void clearDocuments() {
-    state = [];
   }
 }
 
