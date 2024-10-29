@@ -1,5 +1,3 @@
-// scanned_documents_notifier.dart
-
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -49,26 +47,31 @@ class ScannedDocumentsNotifier
     fetchScannedDocuments();
   }
 
+  // Fetch documents with real-time updates
   Future<void> fetchScannedDocuments() async {
     try {
       User? user = FirebaseAuth.instance.currentUser;
       if (user == null) return;
 
-      QuerySnapshot snapshot = await FirebaseFirestore.instance
-          .collection('scannedDocuments')
-          .where('userId', isEqualTo: user.uid)
+      // Listen for real-time updates
+      FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('documents')
           .orderBy('timestamp', descending: true)
-          .get();
-
-      state = snapshot.docs
-          .map((doc) => doc.data() as Map<String, dynamic>)
-          .toList();
+          .snapshots()
+          .listen((snapshot) {
+        state = snapshot.docs
+            .map((doc) => {...doc.data(), 'id': doc.id}) // Include document ID
+            .toList();
+      });
     } catch (e) {
       print('Error fetching scanned documents: $e');
     }
   }
 
-  Future<void> deleteDocument(String documentId) async {
+  // Delete a document from Firestore and Storage
+  Future<void> deleteDocument(String documentId, String downloadUrl) async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       try {
@@ -80,8 +83,13 @@ class ScannedDocumentsNotifier
             .doc(documentId)
             .delete();
 
-        // Remove the document from the local state immediately
+        // Optional: Remove the document from the local state if necessary
         state = state.where((doc) => doc['id'] != documentId).toList();
+
+        // Delete the file from Firebase Storage
+        final storageRef = FirebaseStorage.instance.refFromURL(downloadUrl);
+        await storageRef.delete();
+        print('Document deleted from Storage and Firestore: $documentId');
       } catch (e) {
         print('Error deleting document: $e');
       }
@@ -133,7 +141,10 @@ class ScannedDocumentsNotifier
           .add(documentData);
 
       // Update local state
-      state = [...state, documentData];
+      state = [
+        ...state,
+        {...documentData, 'id': documentData['documentId']}
+      ];
     } catch (e) {
       uploadNotifier.setError();
       print('Error uploading document: $e');

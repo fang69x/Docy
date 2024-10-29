@@ -120,7 +120,7 @@ class ScannedDocuments extends ConsumerWidget {
                       // Ensure you are using the provider correctly
                       await ref
                           .read(scannedDocumentsProvider.notifier)
-                          .deleteDocument(documentId);
+                          .deleteDocument(documentId, downloadUrl);
 
                       // Optionally, refresh the documents
                       await ref
