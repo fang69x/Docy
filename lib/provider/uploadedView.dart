@@ -1,11 +1,12 @@
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// Define the DocumentNotifier
 class DocumentNotifier extends StateNotifier<List<Map<String, dynamic>>> {
-  DocumentNotifier() : super([]);
+  DocumentNotifier() : super([]) {
+    fetchUploadedDocuments(); // Call the method when the notifier is created
+  }
 
   // Method to fetch uploaded documents
   Future<void> fetchUploadedDocuments() async {
@@ -21,57 +22,41 @@ class DocumentNotifier extends StateNotifier<List<Map<String, dynamic>>> {
           .snapshots()
           .listen((snapshot) {
         state = snapshot.docs
-            .map((doc) => doc.data() as Map<String, dynamic>)
+            .map((doc) => {
+                  ...doc.data(),
+                  'id': doc.id, // Include the document ID for deletion
+                })
             .toList();
       });
     } catch (e) {
-      print('Error fetching uploaded documents: $e');
       // Optionally, you can notify the user with a Snackbar or other means.
     }
   }
 
   // Method to delete a document
-  Future<void> deleteDocument(String documentId) async {
-    try {
-      User? user = FirebaseAuth.instance.currentUser;
-      if (user != null) {
-        DocumentReference documentRef = FirebaseFirestore.instance
-            .collection('uploadedDocuments')
-            .doc(documentId);
+  Future<void> deleteDocument(String documentId, String downloadUrl) async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      try {
+        // Delete the document from Firestore
+        await FirebaseFirestore.instance
+            .collection('uploadedDocuments') // Correct the collection name
+            .doc(documentId)
+            .delete();
 
-        // Fetch the document
-        DocumentSnapshot docSnapshot = await documentRef.get();
+        // Optional: Remove the document from the local state if necessary
+        state = state.where((doc) => doc['id'] != documentId).toList();
 
-        if (docSnapshot.exists) {
-          Map<String, dynamic>? data =
-              docSnapshot.data() as Map<String, dynamic>?;
-
-          if (data != null) {
-            String? downloadUrl = data['downloadUrl'];
-            if (downloadUrl != null) {
-              String filePath =
-                  downloadUrl.split('?')[0].split('/o/').last.split('?')[0];
-              filePath = Uri.decodeFull(filePath.replaceAll('%20', ' '));
-
-              // Delete the file from Firebase Storage
-              await FirebaseStorage.instance
-                  .ref('your/storage/path/$filePath')
-                  .delete();
-            }
-            // Delete the document from Firestore
-            await documentRef.delete();
-            print('Document deleted: $documentId');
-          }
-        }
-      }
-    } catch (e) {
-      print('Error deleting document: $e');
+        // Delete the file from Firebase Storage
+        final storageRef = FirebaseStorage.instance.refFromURL(downloadUrl);
+        await storageRef.delete();
+        // ignore: empty_catches
+      } catch (e) {}
     }
   }
-}
 
-// Create a provider for the DocumentNotifier
-final documentProvider =
-    StateNotifierProvider<DocumentNotifier, List<Map<String, dynamic>>>((ref) {
-  return DocumentNotifier();
-});
+  final documentProvider =
+      StateNotifierProvider<DocumentNotifier, List<Map<String, dynamic>>>(
+    (ref) => DocumentNotifier(),
+  );
+}

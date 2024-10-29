@@ -133,7 +133,7 @@ class UploadedDocuments extends ConsumerWidget {
                       downloadUrl, fileName); // Call the download function
                 },
                 onDelete: () {
-                  deleteDocument(document as String);
+                  deleteDocument(document['doccumentId']);
                 },
               );
             },
