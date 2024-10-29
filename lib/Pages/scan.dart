@@ -10,7 +10,38 @@ import 'dart:typed_data';
 class DocumentScannerPage extends ConsumerWidget {
   final DocumentScannerController _controller = DocumentScannerController();
 
-  DocumentScannerPage({Key? key}) : super(key: key);
+  Future<String?> _showRenameDialog(BuildContext context) async {
+    TextEditingController controller = TextEditingController();
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Enter Document Name'),
+          content: TextField(
+            controller: controller,
+            decoration: const InputDecoration(hintText: 'Document Name'),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+            ),
+            TextButton(
+              child: const Text('Upload'),
+              onPressed: () {
+                Navigator.of(context)
+                    .pop(controller.text); // Return the entered name
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  DocumentScannerPage({super.key});
 
   Uint8List? _capturedImage;
 
@@ -38,6 +69,17 @@ class DocumentScannerPage extends ConsumerWidget {
           if (_capturedImage != null)
             ElevatedButton(
               onPressed: () async {
+                // Show dialog to get the document name
+                String? documentName = await _showRenameDialog(context);
+                if (documentName == null || documentName.isEmpty) {
+                  // If no name was provided, show an error or return
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                        content: Text('Please enter a valid document name.')),
+                  );
+                  return;
+                }
+
                 try {
                   // Start upload
                   ref.read(uploadProvider.notifier).startUpload();
@@ -53,7 +95,7 @@ class DocumentScannerPage extends ConsumerWidget {
 
                   // Define the storage path using the user ID
                   String fileName =
-                      'users/${user.uid}/scanned_documents/${DateTime.now().millisecondsSinceEpoch}.png';
+                      'users/${user.uid}/scanned_documents/$documentName.png';
                   final storageRef = FirebaseStorage.instance.ref(fileName);
 
                   // Create an upload task and upload the file
@@ -77,7 +119,7 @@ class DocumentScannerPage extends ConsumerWidget {
                   // Save metadata to Firestore under the user’s collection
                   Map<String, dynamic> documentData = {
                     'userId': user.uid,
-                    'fileName': fileName,
+                    'fileName': documentName,
                     'downloadUrl': downloadUrl,
                     'timestamp': Timestamp.now(),
                   };
