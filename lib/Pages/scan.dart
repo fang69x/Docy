@@ -75,7 +75,8 @@ class DocumentScannerPage extends ConsumerWidget {
                   // If no name was provided, show an error or return
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                        content: Text('Please enter a valid document name.')),
+                        content:
+                            const Text('Please enter a valid document name.')),
                   );
                   return;
                 }

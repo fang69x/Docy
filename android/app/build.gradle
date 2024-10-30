@@ -26,6 +26,12 @@ if (flutterVersionName == null) {
     flutterVersionName = "1.0"
 }
 
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('key.properties')
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
 android {
     namespace = "com.example.docy"
     compileSdk = flutter.compileSdkVersion
@@ -46,14 +52,27 @@ android {
         versionCode = flutterVersionCode.toInteger()
         versionName = flutterVersionName
     }
+    
 
+     
+    signingConfigs {
+        release {
+            keyAlias 'key0' // Your key alias
+            keyPassword '6206542014' // Your key password
+            storeFile file('../app/upload-keystore.jks') // Ensure this path is correct
+            storePassword '6206542014' // Your store password
+        }
+    }
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
+            // Signing with the debug keys for now,
+            // so `flutter run --release` works.
             signingConfig = signingConfigs.debug
+            signingConfig = signingConfigs.release
         }
     }
+
 }
 
 flutter {
