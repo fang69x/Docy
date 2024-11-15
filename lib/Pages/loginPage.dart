@@ -1,3 +1,4 @@
+import 'package:docy/Pages/forgotPassword.dart';
 import 'package:docy/Pages/textform.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -75,7 +76,10 @@ class LoginPage extends ConsumerWidget {
                 alignment: Alignment.centerRight,
                 child: TextButton(
                   onPressed: () {
-                    // Implement forgot password functionality
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const ForgotPasswordPage()));
                   },
                   child: const Text(
                     'Forgot password?',
