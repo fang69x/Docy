@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:docy/Pages/docdetail.dart';
 import 'package:docy/Pages/scan.dart';
 import 'package:docy/provider/themeProvider.dart';
@@ -25,20 +27,47 @@ class HomePage extends ConsumerStatefulWidget {
 
 class _HomePageState extends ConsumerState<HomePage> {
   String userName = "";
+  late PageController _pageController;
+  late Timer _timer;
+
   @override
   void initState() {
     super.initState();
     _fetchUserName();
+    _pageController = PageController();
+    _startAutoScroll();
   }
 
+  // Fetch user's name from FirebaseAuth
   void _fetchUserName() {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       setState(() {
-        userName = user.displayName ??
-            'Guest'; // Fetch display name, or 'Guest' if null
+        userName = user.displayName ?? 'Guest';
       });
     }
+  }
+
+  // Start auto-scrolling after 5 seconds interval
+  void _startAutoScroll() {
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+      if (_pageController.hasClients) {
+        int nextPage = (_pageController.page?.toInt() ?? 0) + 1;
+        if (nextPage >= 5) nextPage = 0; // Loop back to the first banner
+        _pageController.animateToPage(
+          nextPage,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel(); // Stop the timer when the widget is disposed
+    _pageController.dispose();
+    super.dispose();
   }
 
   Widget build(BuildContext context) {
@@ -92,7 +121,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       slivers: <Widget>[
         SliverAppBar(
           backgroundColor: Colors.transparent,
-          expandedHeight: 500.h, // Adjust the height for the SliverAppBar
+          expandedHeight: 450.h,
           flexibleSpace: FlexibleSpaceBar(
             background: Container(
               decoration: const BoxDecoration(
@@ -108,39 +137,43 @@ class _HomePageState extends ConsumerState<HomePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // 1. Greeting with User's Name and Profile Picture on the Right
                   SizedBox(
                     height: 100.h,
                   ),
-                  // 2. Custom Scrollable Banner Section
+                  // Custom Scrollable Banner Section
                   Container(
                     height: 150.h, // Adjust the height for the banners
                     padding: EdgeInsets.symmetric(horizontal: 20.0.w),
-                    child: SingleChildScrollView(
+                    child: PageView(
+                      controller: _pageController,
                       scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          // Custom Banner 1 - App Info
-                          BannerCard(
-                            title: 'Welcome to Docy!',
-                            subtitle:
-                                'Manage your documents with ease. Upload, view, and organize your files effortlessly!',
-                          ),
-                          SizedBox(
-                              width: 16.0.w), // Add spacing between banners
-
-                          // Custom Banner 2 - Recently Uploaded Documents
-                          BannerCard(
-                            title: 'Recently Uploaded Documents',
-                            subtitle:
-                                'Check out the latest documents you uploaded.',
-                          ),
-                          SizedBox(
-                              width: 16.0.w), // Add spacing between banners
-
-                          // Add more banners as needed
-                        ],
-                      ),
+                      children: [
+                        BannerCard(
+                          title: 'Welcome to Docy!',
+                          subtitle:
+                              'Manage your documents with ease. Upload, view, and organize your files effortlessly!',
+                        ),
+                        BannerCard(
+                          title: 'Recently Uploaded Documents',
+                          subtitle:
+                              'Check out the latest documents you uploaded.',
+                        ),
+                        BannerCard(
+                          title: 'New Features',
+                          subtitle:
+                              'We’ve added exciting new features! Explore now.',
+                        ),
+                        BannerCard(
+                          title: 'Docy Premium',
+                          subtitle:
+                              'Upgrade to Docy Premium for additional benefits.',
+                        ),
+                        BannerCard(
+                          title: 'Support',
+                          subtitle:
+                              'Need help? Visit our support page for assistance.',
+                        ),
+                      ],
                     ),
                   ),
                 ],
@@ -153,19 +186,17 @@ class _HomePageState extends ConsumerState<HomePage> {
           child: Container(
             padding: EdgeInsets.symmetric(horizontal: 20.0.w),
             child: Card(
-              surfaceTintColor: const Color.fromARGB(255, 62, 5,
-                  143), // Optional: Makes the card's surface transparent
+              surfaceTintColor: const Color.fromARGB(255, 62, 5, 143),
               elevation: 20,
               shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(25), // Rounded top left corner
-                  topRight: Radius.circular(25), // Rounded top right corner
+                  topLeft: Radius.circular(25),
+                  topRight: Radius.circular(25),
                 ),
               ),
               child: ClipRRect(
                 borderRadius: const BorderRadius.only(
-                  topLeft:
-                      Radius.circular(25), // Ensure the top corners are clipped
+                  topLeft: Radius.circular(25),
                   topRight: Radius.circular(25),
                 ),
                 child: Padding(
@@ -192,6 +223,20 @@ class _HomePageState extends ConsumerState<HomePage> {
                         },
                       ),
                       HomeTile(
+                        name: 'Upload Documents',
+                        icon: const Icon(Icons.edit_document,
+                            size: 32, color: Colors.deepPurple),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) =>
+                                  const AddDocumentPage(),
+                            ),
+                          );
+                        },
+                      ),
+                      HomeTile(
                         name: 'View Documents',
                         icon: const Icon(Icons.folder,
                             size: 32, color: Colors.deepPurple),
@@ -206,26 +251,10 @@ class _HomePageState extends ConsumerState<HomePage> {
                         },
                       ),
                       HomeTile(
-                        name: 'Add Documents',
-                        icon: const Icon(Icons.edit_document,
+                        name: 'Edit Documents',
+                        icon: const Icon(Icons.edit,
                             size: 32, color: Colors.deepPurple),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  const AddDocumentPage(),
-                            ),
-                          );
-                        },
-                      ),
-                      HomeTile(
-                        name: 'Settings',
-                        icon: const Icon(Icons.settings,
-                            size: 32, color: Colors.deepPurple),
-                        onTap: () {
-                          // Add settings functionality or redirect here
-                        },
+                        onTap: () {},
                       ),
                     ],
                   ),
