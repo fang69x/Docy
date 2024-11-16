@@ -1,6 +1,6 @@
 import 'dart:convert';
-
 import 'package:docy/Pages/emailVerification.dart';
+import 'package:docy/buttons/CustomElevated.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:docy/provider/auth_provider.dart';
@@ -9,11 +9,11 @@ import 'package:docy/Pages/loginPage.dart';
 import 'package:docy/Pages/textform.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:http/http.dart' as http;
+import 'package:lottie/lottie.dart';
 
 class SignUpPage extends ConsumerWidget {
   final nameController = TextEditingController();
   final emailController = TextEditingController();
-  final phoneController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
 
@@ -56,120 +56,133 @@ class SignUpPage extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-              horizontal: 30.w, vertical: 60.h), // Responsive padding
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 10.h),
-              Center(
-                child: Icon(
-                  Icons.person_add,
-                  color: Color(0xFFF4B342),
-                  size: 80.sp, // Responsive size
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color.fromARGB(255, 137, 74, 226),
+              Color.fromARGB(255, 1, 10, 26)
+            ], // Blue gradient to match the app's tone
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+                horizontal: 20.w, vertical: 30.h), // Responsive padding
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 10.h),
+                Center(
+                  child: SizedBox(
+                    height: 120.h,
+                    width: 120.w,
+                    child: Lottie.asset(
+                      'lib/assets/lottie/Registration.json',
+                      fit: BoxFit.contain,
+                      repeat: true,
+                    ),
+                  ),
                 ),
-              ),
-              SizedBox(height: 5.h),
-              Text(
-                'Create Account',
-                style: TextStyle(
-                  fontSize: 32.sp, // Responsive font size
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                ),
-              ),
-              SizedBox(height: 5.h),
-              Text(
-                'Sign up to get started',
-                style: TextStyle(
-                  fontSize: 18.sp, // Responsive font size
-                  color: Colors.grey,
-                ),
-              ),
-              SizedBox(height: 10.h),
-
-              // Name Input
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10.w),
-                child: Text(
-                  "Name",
+                SizedBox(height: 5.h),
+                Text(
+                  'Create Account',
                   style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 14.sp), // Responsive font size
+                    fontSize: 25.sp, // Responsive font size
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
                 ),
-              ),
-              SizedBox(height: 10.h),
-              MyTextField(
-                controller: nameController,
-                hintText: "Enter full name",
-                obscureText: false,
-                prefixIcon: const Icon(Icons.person, color: Colors.grey),
-              ),
-              SizedBox(height: 10.h),
-
-              // Email Input
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10.w),
-                child: Text(
-                  "Email",
+                SizedBox(height: 5.h),
+                Text(
+                  'Sign up to get started',
                   style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 14.sp), // Responsive font size
+                    fontSize: 18.sp, // Responsive font size
+                    color: Colors.grey,
+                  ),
                 ),
-              ),
-              SizedBox(height: 10.h),
-              MyTextField(
-                controller: emailController,
-                hintText: "Enter email",
-                obscureText: false,
-                prefixIcon: const Icon(Icons.email, color: Colors.grey),
-              ),
-              SizedBox(height: 10.h),
+                SizedBox(height: 10.h),
 
-              // Password Input
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10.w),
-                child: Text(
-                  "Password",
-                  style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 14.sp), // Responsive font size
+                // Name Input
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10.w),
+                  child: Text(
+                    "Name",
+                    style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 14.sp), // Responsive font size
+                  ),
                 ),
-              ),
-              SizedBox(height: 10.h),
-              MyTextField(
-                controller: passwordController,
-                hintText: "Enter password",
-                obscureText: true,
-                prefixIcon: const Icon(Icons.lock, color: Colors.grey),
-              ),
-              SizedBox(height: 20.h),
-
-              // Confirm Password Input
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10.w),
-                child: Text(
-                  "Confirm Password",
-                  style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 14.sp), // Responsive font size
+                SizedBox(height: 10.h),
+                MyTextField(
+                  controller: nameController,
+                  hintText: "Enter full name",
+                  obscureText: false,
+                  prefixIcon: const Icon(Icons.person, color: Colors.grey),
                 ),
-              ),
-              SizedBox(height: 10.h),
-              MyTextField(
-                controller: confirmPasswordController,
-                hintText: "Re-enter password",
-                obscureText: true,
-                prefixIcon: const Icon(Icons.lock, color: Colors.grey),
-              ),
-              SizedBox(height: 20.h),
+                SizedBox(height: 10.h),
 
-              SizedBox(
-                width: double.maxFinite,
-                height: 50.h,
-                child: ElevatedButton(
+                // Email Input
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10.w),
+                  child: Text(
+                    "Email",
+                    style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 14.sp), // Responsive font size
+                  ),
+                ),
+                SizedBox(height: 10.h),
+                MyTextField(
+                  controller: emailController,
+                  hintText: "Enter email",
+                  obscureText: false,
+                  prefixIcon: const Icon(Icons.email, color: Colors.grey),
+                ),
+                SizedBox(height: 10.h),
+
+                // Password Input
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10.w),
+                  child: Text(
+                    "Password",
+                    style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 14.sp), // Responsive font size
+                  ),
+                ),
+                SizedBox(height: 10.h),
+                MyTextField(
+                  controller: passwordController,
+                  hintText: "Enter password",
+                  obscureText: true,
+                  prefixIcon: const Icon(Icons.lock, color: Colors.grey),
+                ),
+                SizedBox(height: 10.h),
+
+                // Confirm Password Input
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10.w),
+                  child: Text(
+                    "Confirm Password",
+                    style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 14.sp), // Responsive font size
+                  ),
+                ),
+                SizedBox(height: 10.h),
+                MyTextField(
+                  controller: confirmPasswordController,
+                  hintText: "Re-enter password",
+                  obscureText: true,
+                  prefixIcon: const Icon(Icons.lock, color: Colors.grey),
+                ),
+                SizedBox(height: 20.h),
+
+                CustomElevatedButton(
+                  label: 'Sign Up',
                   onPressed: () async {
                     // Send OTP without creating Firebase account
                     bool otpSent = await sendOtp(emailController.text);
@@ -193,42 +206,34 @@ class SignUpPage extends ConsumerWidget {
                       );
                     }
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFF4B342),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                  child: Text(
-                    'Sign Up',
-                    style: TextStyle(color: Colors.white, fontSize: 20.sp),
-                  ),
                 ),
-              ),
-              SizedBox(height: 20.h),
+                SizedBox(height: 10.h),
 
-              // Already have an account? Login link
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("Already have an account?",
-                      style:
-                          TextStyle(fontSize: 14.sp)), // Responsive font size
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => LoginPage()),
-                      );
-                    },
-                    child: const Text(
-                      " Login",
-                      style: TextStyle(color: Color(0xFFF4B342)),
+                // Already have an account? Login link
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Already have an account?",
+                        style: TextStyle(
+                            fontSize: 14.sp,
+                            color: Colors.grey)), // Responsive font size
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => LoginPage()),
+                        );
+                      },
+                      child: const Text(
+                        " Login",
+                        style: TextStyle(
+                            color: Color.fromARGB(255, 155, 155, 155)),
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
