@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:docy/Pages/docdetail.dart';
 import 'package:docy/Pages/scan.dart';
+import 'package:docy/Pages/scan_doc.dart';
+import 'package:docy/Pages/upload_doc.dart';
 import 'package:docy/provider/themeProvider.dart';
 import 'package:docy/tile/bannercard.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -176,6 +178,117 @@ class _HomePageState extends ConsumerState<HomePage> {
                       ],
                     ),
                   ),
+                  SizedBox(
+                    height: 50.h,
+                  ),
+                  Center(
+                    child: Padding(
+                        padding: EdgeInsets.symmetric(
+                            horizontal: 20.0.w, vertical: 10.h),
+                        child: GestureDetector(
+                          onTap: () async {
+                            final choice = await showDialog<String>(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return Dialog(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20.0),
+                                  ),
+                                  elevation: 16,
+                                  backgroundColor: Colors.white,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(20.0),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        const Text(
+                                          'Choose Document Action',
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.deepPurple,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 20),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: <Widget>[
+                                            GestureDetector(
+                                              onTap: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (BuildContext
+                                                            context) =>
+                                                        DocumentScannerPage(),
+                                                  ),
+                                                );
+                                              },
+                                              child: const Column(
+                                                children: [
+                                                  Icon(
+                                                    Icons.camera_alt,
+                                                    size: 50,
+                                                    color: Colors.deepPurple,
+                                                  ),
+                                                  Text('Scan'),
+                                                ],
+                                              ),
+                                            ),
+                                            GestureDetector(
+                                              onTap: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (BuildContext
+                                                            context) =>
+                                                        const AddDocumentPage(),
+                                                  ),
+                                                );
+                                              },
+                                              child: const Column(
+                                                children: [
+                                                  Icon(
+                                                    Icons.upload_file,
+                                                    size: 50,
+                                                    color: Colors.deepPurple,
+                                                  ),
+                                                  Text('Upload'),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                          child: CircleAvatar(
+                            radius: 30.r,
+                            backgroundColor: Colors.deepPurple,
+                            child: Icon(
+                              Icons.add,
+                              size: 32.sp,
+                              color: Colors.white,
+                            ),
+                          ),
+                        )),
+                  ),
+                  Center(
+                      child: Padding(
+                    padding: EdgeInsets.only(top: 8.0.h),
+                    child: Text(
+                      "Add Document",
+                      style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.deepPurple),
+                    ),
+                  ))
                 ],
               ),
             ),
@@ -209,21 +322,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                     mainAxisSpacing: 16.0.h,
                     children: [
                       HomeTile(
-                        name: 'Scan File',
-                        icon: const Icon(Icons.camera,
-                            size: 32, color: Colors.deepPurple),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  DocumentScannerPage(),
-                            ),
-                          );
-                        },
-                      ),
-                      HomeTile(
-                        name: 'Upload Documents',
+                        name: 'Scanned Documents',
                         icon: const Icon(Icons.edit_document,
                             size: 32, color: Colors.deepPurple),
                         onTap: () {
@@ -231,30 +330,24 @@ class _HomePageState extends ConsumerState<HomePage> {
                             context,
                             MaterialPageRoute(
                               builder: (BuildContext context) =>
-                                  const AddDocumentPage(),
+                                  const ScannedDocuments(),
                             ),
                           );
                         },
                       ),
                       HomeTile(
-                        name: 'View Documents',
-                        icon: const Icon(Icons.folder,
+                        name: 'Uploaded Documents',
+                        icon: const Icon(Icons.camera_alt,
                             size: 32, color: Colors.deepPurple),
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (BuildContext context) =>
-                                  const MyDocuments(),
+                                  const UploadedDocuments(),
                             ),
                           );
                         },
-                      ),
-                      HomeTile(
-                        name: 'Edit Documents',
-                        icon: const Icon(Icons.edit,
-                            size: 32, color: Colors.deepPurple),
-                        onTap: () {},
                       ),
                     ],
                   ),
