@@ -16,8 +16,20 @@ class HomeTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Card(
-        shadowColor: Theme.of(context).shadowColor,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300), // Animation duration
+        curve: Curves.easeInOut, // Smooth animation curve
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor, // Dynamic color based on theme
+          borderRadius: BorderRadius.circular(16.0), // Rounded corners
+          boxShadow: [
+            BoxShadow(
+              color: Theme.of(context).shadowColor.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 4), // Subtle shadow for elevation effect
+            ),
+          ],
+        ),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
@@ -25,14 +37,25 @@ class HomeTile extends StatelessWidget {
             crossAxisAlignment:
                 CrossAxisAlignment.center, // Center horizontally
             children: [
-              icon,
+              AnimatedScale(
+                duration: const Duration(
+                    milliseconds: 200), // Animation duration for icon
+                scale: 1.2, // Scale up the icon when hovered
+                child: icon,
+              ),
               const SizedBox(height: 8), // Spacing between icon and text
-              Text(
-                name,
-                style: const TextStyle(
+              AnimatedDefaultTextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
+                  color: Theme.of(context)
+                      .textTheme
+                      .bodyLarge!
+                      .color, // Text color based on theme
                 ),
+                duration: const Duration(
+                    milliseconds: 200), // Animation duration for text
+                child: Text(name),
               ),
             ],
           ),

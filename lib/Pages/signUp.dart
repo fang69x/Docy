@@ -197,6 +197,7 @@ class SignUpPage extends ConsumerWidget {
                           builder: (context) => EmailVerification(
                             emailController.text,
                             passwordController.text,
+                            nameController.text,
                           ),
                         ),
                       );

@@ -24,12 +24,14 @@ class AuthNotifier extends StateNotifier<User?> {
   }
 
   // Sign up with email and password
-  Future<void> signUp(String email, String password) async {
+  Future<void> signUp(String email, String password, String displayName) async {
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      final UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
+      await userCredential.user?.updateDisplayName(displayName);
     } catch (e) {
       throw Exception('Failed to sign up: $e'); // Handle error appropriately
     }

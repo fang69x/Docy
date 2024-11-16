@@ -1,3 +1,4 @@
+import 'package:docy/Pages/emailVerification.dart';
 import 'package:docy/Pages/homePage.dart';
 import 'package:docy/Pages/signUp.dart';
 import 'package:docy/Pages/welcomePage.dart';
@@ -36,6 +37,7 @@ class Docy extends ConsumerWidget {
           darkTheme: ThemeData.dark(),
           // Check if user is logged in and navigate accordingly
           home: user != null ? const HomePage() : const Welcomepage(),
+
           routes: {
             '/login': (context) => LoginPage(),
             '/signup': (context) => SignUpPage(),
