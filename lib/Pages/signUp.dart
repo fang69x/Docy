@@ -24,7 +24,7 @@ class SignUpPage extends ConsumerWidget {
   Future<bool> sendOtp(String email) async {
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:3000/send-otp'),
+        Uri.parse('https://docy.onrender.com/send-otp'),
         headers: {
           'Content-Type': 'application/json',
         },

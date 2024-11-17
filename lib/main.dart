@@ -1,11 +1,9 @@
-import 'package:docy/Pages/emailVerification.dart';
 import 'package:docy/Pages/homePage.dart';
 import 'package:docy/Pages/signUp.dart';
 import 'package:docy/Pages/welcomePage.dart';
 import 'package:docy/firebase_options.dart';
 import 'package:docy/provider/auth_provider.dart';
 import 'package:docy/provider/themeProvider.dart';
-import 'package:docy/theme/themedata.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

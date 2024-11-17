@@ -20,7 +20,7 @@ class EmailVerification extends ConsumerWidget {
   Future<bool> verifyOtp(String email, String otp) async {
     try {
       final response = await http.post(
-        Uri.parse('http://10.0.2.2:3000/verify-otp'),
+        Uri.parse('https://docy.onrender.com/verify-otp'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'email': email, 'otp': otp}),
       );
