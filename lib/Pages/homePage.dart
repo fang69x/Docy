@@ -1,10 +1,8 @@
 import 'dart:async';
 
-import 'package:docy/Pages/docdetail.dart';
 import 'package:docy/Pages/scan.dart';
 import 'package:docy/Pages/scan_doc.dart';
 import 'package:docy/Pages/upload_doc.dart';
-import 'package:docy/provider/themeProvider.dart';
 import 'package:docy/tile/bannercard.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -187,6 +185,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                             horizontal: 20.0.w, vertical: 10.h),
                         child: GestureDetector(
                           onTap: () async {
+                            // ignore: unused_local_variable
                             final choice = await showDialog<String>(
                               context: context,
                               builder: (BuildContext context) {
