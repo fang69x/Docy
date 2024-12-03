@@ -7,7 +7,7 @@
 
 ## Features
 
-- **User Authentication**: Secure login and signup with Firebase Authentication, including Google login.
+- **User Authentication**: Secure login and signup with Firebase Authentication, including Google login .
 - **Document Management**: Upload and manage various types of documents and folders.
 - **Document Scanning**: Use the built-in scanner to scan physical documents and store them directly in the app.
 - **Cloud Storage**: All documents are stored securely using Firebase Storage.
