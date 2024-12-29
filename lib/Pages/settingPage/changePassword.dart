@@ -68,106 +68,108 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
         title: const Text('Change Password'),
         backgroundColor: const Color.fromARGB(255, 137, 74, 226),
       ),
-      body: Container(
-        height: double.infinity,
-        width: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Color.fromARGB(255, 137, 74, 226),
-              Color.fromARGB(255, 1, 10, 26),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+      body: SingleChildScrollView(
+        child: Container(
+          height: double.infinity,
+          width: double.infinity,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                Color.fromARGB(255, 137, 74, 226),
+                Color.fromARGB(255, 1, 10, 26),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
           ),
-        ),
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 30.h),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Change your password',
-                style: TextStyle(
-                  fontSize: 20.sp,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-              SizedBox(height: 20.h),
-              TextField(
-                controller: currentPasswordController,
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: 'Current Password',
-                  labelStyle: const TextStyle(color: Colors.white),
-                  filled: true,
-                  fillColor: Colors.white24,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15.r),
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 30.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Change your password',
+                  style: TextStyle(
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
                 ),
-                style: const TextStyle(color: Colors.white),
-              ),
-              SizedBox(height: 20.h),
-              TextField(
-                controller: newPasswordController,
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: 'New Password',
-                  labelStyle: const TextStyle(color: Colors.white),
-                  filled: true,
-                  fillColor: Colors.white24,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15.r),
-                  ),
-                ),
-                style: const TextStyle(color: Colors.white),
-              ),
-              SizedBox(height: 30.h),
-              TextField(
-                controller: confirmPasswordController,
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: 'Confirm Password',
-                  labelStyle: const TextStyle(color: Colors.white),
-                  filled: true,
-                  fillColor: Colors.white24,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15.r),
-                  ),
-                ),
-                style: const TextStyle(color: Colors.white),
-              ),
-              // Display error message if any
-              if (errorMessage.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10.0),
-                  child: Text(
-                    errorMessage,
-                    style: TextStyle(color: Colors.red, fontSize: 16.sp),
-                  ),
-                ),
-              SizedBox(height: 30.h),
-              Center(
-                child: ElevatedButton(
-                  onPressed:
-                      _changePassword, // Call the change password function
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromARGB(255, 137, 74, 226),
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 40.w, vertical: 15.h),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.r),
+                SizedBox(height: 20.h),
+                TextField(
+                  controller: currentPasswordController,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    labelText: 'Current Password',
+                    labelStyle: const TextStyle(color: Colors.white),
+                    filled: true,
+                    fillColor: Colors.white24,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15.r),
                     ),
                   ),
-                  child: Text(
-                    'Change Password',
-                    style: TextStyle(fontSize: 16.sp, color: Colors.white),
+                  style: const TextStyle(color: Colors.white),
+                ),
+                SizedBox(height: 20.h),
+                TextField(
+                  controller: newPasswordController,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    labelText: 'New Password',
+                    labelStyle: const TextStyle(color: Colors.white),
+                    filled: true,
+                    fillColor: Colors.white24,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15.r),
+                    ),
+                  ),
+                  style: const TextStyle(color: Colors.white),
+                ),
+                SizedBox(height: 30.h),
+                TextField(
+                  controller: confirmPasswordController,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    labelText: 'Confirm Password',
+                    labelStyle: const TextStyle(color: Colors.white),
+                    filled: true,
+                    fillColor: Colors.white24,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(15.r),
+                    ),
+                  ),
+                  style: const TextStyle(color: Colors.white),
+                ),
+                // Display error message if any
+                if (errorMessage.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10.0),
+                    child: Text(
+                      errorMessage,
+                      style: TextStyle(color: Colors.red, fontSize: 16.sp),
+                    ),
+                  ),
+                SizedBox(height: 30.h),
+                Center(
+                  child: ElevatedButton(
+                    onPressed:
+                        _changePassword, // Call the change password function
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color.fromARGB(255, 137, 74, 226),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 40.w, vertical: 15.h),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.r),
+                      ),
+                    ),
+                    child: Text(
+                      'Change Password',
+                      style: TextStyle(fontSize: 16.sp, color: Colors.white),
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

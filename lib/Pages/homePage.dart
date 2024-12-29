@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:docy/Pages/scan.dart';
 import 'package:docy/Pages/scan_doc.dart';
+import 'package:docy/Pages/textform.dart';
 import 'package:docy/Pages/upload_doc.dart';
 import 'package:docy/tile/bannercard.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -62,6 +64,62 @@ class _HomePageState extends ConsumerState<HomePage> {
       }
     });
   }
+
+  Future<void> _addFolder() async {
+    final folderNameController = TextEditingController();
+    final userId = FirebaseAuth.instance.currentUser?.uid;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Add Folder'),
+          content: MyTextField(
+            controller: folderNameController,
+            hintText: 'Folder Name',
+            obscureText: false,
+          ),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                final folderName = folderNameController.text.trim();
+                if (folderName.isNotEmpty && userId != null) {
+                  try {
+                    // Call the addFolder function
+                    await _addFolder();
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Folder created successfully')),
+                    );
+                  } catch (e) {
+                    Navigator.pop(context);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Error: $e')),
+                    );
+                  }
+                } else {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Please enter a folder name')),
+                  );
+                }
+              },
+              child: const Text('Add'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+                folderNameController.dispose();  // Dispose of the controller when the dialog is dismissed
+              },
+              child: const Text('Cancel'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+
 
   @override
   void dispose() {
@@ -151,27 +209,27 @@ class _HomePageState extends ConsumerState<HomePage> {
                         BannerCard(
                           title: 'Welcome to Docy!',
                           subtitle:
-                              'Manage your documents with ease. Upload, view, and organize your files effortlessly!',
+                          'Manage your documents with ease. Upload, view, and organize your files effortlessly!',
                         ),
                         BannerCard(
                           title: 'Recently Uploaded Documents',
                           subtitle:
-                              'Check out the latest documents you uploaded.',
+                          'Check out the latest documents you uploaded.',
                         ),
                         BannerCard(
                           title: 'New Features',
                           subtitle:
-                              'We’ve added exciting new features! Explore now.',
+                          'We’ve added exciting new features! Explore now.',
                         ),
                         BannerCard(
                           title: 'Docy Premium',
                           subtitle:
-                              'Upgrade to Docy Premium for additional benefits.',
+                          'Upgrade to Docy Premium for additional benefits.',
                         ),
                         BannerCard(
                           title: 'Support',
                           subtitle:
-                              'Need help? Visit our support page for assistance.',
+                          'Need help? Visit our support page for assistance.',
                         ),
                       ],
                     ),
@@ -211,7 +269,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                                         const SizedBox(height: 20),
                                         Row(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
+                                          MainAxisAlignment.spaceEvenly,
                                           children: <Widget>[
                                             GestureDetector(
                                               onTap: () {
@@ -219,7 +277,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                                                   context,
                                                   MaterialPageRoute(
                                                     builder: (BuildContext
-                                                            context) =>
+                                                    context) =>
                                                         DocumentScannerPage(),
                                                   ),
                                                 );
@@ -241,8 +299,8 @@ class _HomePageState extends ConsumerState<HomePage> {
                                                   context,
                                                   MaterialPageRoute(
                                                     builder: (BuildContext
-                                                            context) =>
-                                                        const AddDocumentPage(),
+                                                    context) =>
+                                                    const AddDocumentPage(),
                                                   ),
                                                 );
                                               },
@@ -279,15 +337,15 @@ class _HomePageState extends ConsumerState<HomePage> {
                   ),
                   Center(
                       child: Padding(
-                    padding: EdgeInsets.only(top: 8.0.h),
-                    child: Text(
-                      "Add Document",
-                      style: TextStyle(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.deepPurple),
-                    ),
-                  ))
+                        padding: EdgeInsets.only(top: 8.0.h),
+                        child: Text(
+                          "Add Document",
+                          style: TextStyle(
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.deepPurple),
+                        ),
+                      )),
                 ],
               ),
             ),
@@ -312,41 +370,80 @@ class _HomePageState extends ConsumerState<HomePage> {
                   topRight: Radius.circular(25),
                 ),
                 child: Padding(
-                  padding: EdgeInsets.all(8.0.w),
-                  child: GridView.count(
-                    crossAxisCount: 2,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    crossAxisSpacing: 16.0.w,
-                    mainAxisSpacing: 16.0.h,
+                  padding: EdgeInsets.all(10.0.w),
+                  child: Column(
                     children: [
-                      HomeTile(
-                        name: 'Scanned Documents',
-                        icon: const Icon(Icons.edit_document,
-                            size: 32, color: Colors.deepPurple),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (BuildContext context) =>
-                                  const ScannedDocuments(),
+                      // Create Folder Button
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 5.h),
+                        child: ElevatedButton(
+                          onPressed:
+                          _addFolder, // Call your _addFolder method to create a folder
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors
+                                .deepPurple, // You can customize the color
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                          );
-                        },
+                            padding: EdgeInsets.symmetric(vertical: 15.h,horizontal: 10.w
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.create_new_folder,
+                                  color: Colors.white),
+                              SizedBox(width: 8.0.w),
+                              Text(
+                                'Create Folder',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16.sp,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
-                      HomeTile(
-                        name: 'Uploaded Documents',
-                        icon: const Icon(Icons.camera_alt,
-                            size: 32, color: Colors.deepPurple),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (BuildContext context) =>
+
+                      // Existing GridView with Document Tiles
+                      GridView.count(
+                        crossAxisCount: 2,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        crossAxisSpacing: 16.0.w,
+                        mainAxisSpacing: 16.0.h,
+                        children: [
+                          HomeTile(
+                            name: 'Scanned Documents',
+                            icon: const Icon(Icons.edit_document,
+                                size: 32, color: Colors.deepPurple),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (BuildContext context) =>
+                                  const ScannedDocuments(),
+                                ),
+                              );
+                            },
+                          ),
+                          HomeTile(
+                            name: 'Uploaded Documents',
+                            icon: const Icon(Icons.camera_alt,
+                                size: 32, color: Colors.deepPurple),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (BuildContext context) =>
                                   const UploadedDocuments(),
-                            ),
-                          );
-                        },
+                                ),
+                              );
+                            },
+                          ),
+                        ],
                       ),
                     ],
                   ),
