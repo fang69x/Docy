@@ -1,3 +1,4 @@
+import 'package:docy/buttons/customelevated.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:lottie/lottie.dart';
@@ -60,7 +61,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
         body: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              colors: [Colors.orangeAccent, Colors.deepOrange],
+              colors: [
+                Color.fromARGB(255, 137, 74, 226),
+                Color.fromARGB(255, 1, 10, 26)
+              ],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
             ),
@@ -85,7 +89,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                    color: Color.fromARGB(255, 255, 255, 255),
                   ),
                   textAlign: TextAlign.center,
                 ),
@@ -93,7 +97,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
                 const Text(
                   "Enter your email address to receive a password reset link.",
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.white70),
+                  style: TextStyle(color: Color.fromARGB(179, 218, 215, 215)),
                 ),
                 const SizedBox(height: 20),
                 TextField(
@@ -103,31 +107,24 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
                     filled: true,
                     fillColor: Colors.white,
                     labelText: "Email Address",
-                    labelStyle: const TextStyle(color: Colors.orange),
+                    labelStyle: const TextStyle(
+                        color: Color.fromARGB(255, 129, 128, 126)),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12.0),
+                      borderRadius: BorderRadius.circular(30.0),
                     ),
                   ),
                 ),
                 const SizedBox(height: 20),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepOrange,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
+                CustomElevatedButton(
                   onPressed: _resetPassword,
-                  child: const Text(
-                    "Reset Password",
-                    style: TextStyle(color: Colors.white),
-                  ),
+                  label: "Reset Password", // The label for the button text
+                  icon: null, // Optional: You can add an icon here if needed
                 ),
                 TextButton(
                   onPressed: () => Navigator.pop(context),
                   child: const Text(
                     "Back to Login",
-                    style: TextStyle(color: Colors.white),
+                    style: TextStyle(color: Color.fromARGB(255, 220, 220, 220)),
                   ),
                 ),
               ],

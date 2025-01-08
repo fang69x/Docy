@@ -7,7 +7,7 @@
 
 ## Features
 
-- **User Authentication**: Secure login and signup with Firebase Authentication, including Google login.
+- **User Authentication**: Secure login and signup with Firebase Authentication, including Google login .
 - **Document Management**: Upload and manage various types of documents and folders.
 - **Document Scanning**: Use the built-in scanner to scan physical documents and store them directly in the app.
 - **Cloud Storage**: All documents are stored securely using Firebase Storage.
@@ -23,7 +23,10 @@ These instructions will help you get a copy of the project up and running on you
 - [Firebase Account](https://firebase.google.com/) (for authentication and storage)
 - A text editor (e.g., [VS Code](https://code.visualstudio.com/) or [Android Studio](https://developer.android.com/studio))
 
-### Installation
+### ![Screenshot_1731792062](https://github.com/user![Screenshot_1731792068](https://github.com/user-attachments/assets/0d67adea-cc9c-4c41-abdd-1ab001914768)
+-attachments/assets/fbdb8318-d0a3-44e1-9aa7-06c3b9efa01d)![Screenshot_1731967237](https://github.com/user-attachments/assets/6f52c27d-1b89-4da3-b6ea-5ff85b3ed930)
+
+Installation
 
 1. **Clone the repository:**
 
