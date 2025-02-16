@@ -45,11 +45,11 @@ class AddDocumentPage extends ConsumerWidget {
               }),
             ],
           ),
-          actions: <Widget>[
+          actions: const <Widget>[
             TextButton(
               onPressed:
                   null, // Disable the button to prevent interaction during upload
-              child: const Text('Uploading...'),
+              child: Text('Uploading...'),
             ),
           ],
         );
@@ -264,4 +264,4 @@ class AddDocumentPage extends ConsumerWidget {
   }
 }
 
-// Assuming you have a valid uploadProvider
+

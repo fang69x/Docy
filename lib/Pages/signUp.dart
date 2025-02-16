@@ -16,11 +16,8 @@ class SignUpPage extends ConsumerWidget {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
-
   SignUpPage({super.key});
-
 // send otp ka function
-
   Future<bool> sendOtp(String email) async {
     try {
       final response = await http.post(
