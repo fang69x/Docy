@@ -5,28 +5,40 @@ class CustomElevatedButton extends StatelessWidget {
   final String label;
   final VoidCallback onPressed;
   final Widget? icon;
+  final ButtonStyle? style;
 
-  const CustomElevatedButton(
-      {super.key, required this.label, required this.onPressed, this.icon});
+  const CustomElevatedButton({
+    super.key,
+    required this.label,
+    required this.onPressed,
+    this.icon,
+    this.style,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      height: 47.h,
-      child: ElevatedButton.icon(
-        onPressed: onPressed,
-        icon: icon ?? const SizedBox.shrink(),
-        label:
-            Text(label, style: TextStyle(color: Colors.white, fontSize: 16.sp)),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.deepPurple.shade700,
-          foregroundColor: Colors.deepPurple.shade400,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25.r),
-          ),
-        ),
+    final defaultStyle = ElevatedButton.styleFrom(
+      backgroundColor: Colors.white,
+      foregroundColor: const Color.fromARGB(255, 137, 74, 226),
+      elevation: 4,
+      minimumSize: Size(double.infinity, 52.h),
+      padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 24.w),
+      textStyle: TextStyle(
+        fontSize: 16.sp,
+        fontWeight: FontWeight.w600,
+        letterSpacing: 0.5,
       ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.r),
+        side: BorderSide.none,
+      ),
+    );
+
+    return ElevatedButton.icon(
+      onPressed: onPressed,
+      icon: icon ?? const SizedBox.shrink(),
+      label: Text(label),
+      style: defaultStyle.merge(style),
     );
   }
 }
