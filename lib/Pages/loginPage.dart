@@ -44,7 +44,7 @@ class LoginPage extends ConsumerWidget {
                     child: Padding(
                       padding: EdgeInsets.symmetric(
                         horizontal: screenWidth * 0.08,
-                        vertical: 30.h,
+                        vertical: 5.h,
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,7 +59,7 @@ class LoginPage extends ConsumerWidget {
                               ),
                             ),
                           ),
-                          SizedBox(height: 20.h),
+                          SizedBox(height: 5.h),
                           Text(
                             'Welcome Back!',
                             style: TextStyle(
@@ -76,7 +76,7 @@ class LoginPage extends ConsumerWidget {
                               color: Colors.white70,
                             ),
                           ),
-                          SizedBox(height: 40.h),
+                          SizedBox(height: 10.h),
 
                           // Email Input
                           _buildSectionTitle("Email"),
@@ -202,7 +202,7 @@ class LoginPage extends ConsumerWidget {
                               color: Colors.white70,
                               fontSize: 14.sp,
                             ),
-                            children: [
+                            children: const [
                               TextSpan(
                                 text: 'Sign Up',
                                 style: TextStyle(
