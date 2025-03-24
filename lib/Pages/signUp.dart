@@ -16,31 +16,18 @@ class SignUpPage extends ConsumerWidget {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
+
   SignUpPage({super.key});
-// send otp ka function
+
   Future<bool> sendOtp(String email) async {
     try {
       final response = await http.post(
         Uri.parse('https://docy.onrender.com/send-otp'),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'email': email,
-        }),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': email}),
       );
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        // Check if the message indicates success
-        if (data['message'] == 'OTP sent successfully') {
-          return true;
-        } else {
-          return false;
-        }
-      } else {
-        print("Failed to send OTP, Status code: ${response.statusCode}");
-        return false;
-      }
+      return response.statusCode == 200 &&
+          jsonDecode(response.body)['message'] == 'OTP sent successfully';
     } catch (e) {
       print("Error in sendOtp: $e");
       return false;
@@ -49,190 +36,237 @@ class SignUpPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authNotifier = ref.watch(authProvider.notifier); // Auth provider
+    final authNotifier = ref.watch(authProvider.notifier);
 
     return Scaffold(
-      backgroundColor: Colors.white,
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             colors: [
               Color.fromARGB(255, 137, 74, 226),
               Color.fromARGB(255, 1, 10, 26)
-            ], // Blue gradient to match the app's tone
+            ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
+            stops: [0.3, 0.7],
           ),
         ),
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-                horizontal: 20.w, vertical: 30.h), // Responsive padding
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return Column(
               children: [
-                SizedBox(height: 10.h),
-                Center(
-                  child: SizedBox(
-                    height: 120.h,
-                    width: 120.w,
-                    child: Lottie.asset(
-                      'lib/assets/lottie/Registration.json',
-                      fit: BoxFit.contain,
-                      repeat: true,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 5.h),
-                Text(
-                  'Create Account',
-                  style: TextStyle(
-                    fontSize: 25.sp, // Responsive font size
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                SizedBox(height: 5.h),
-                Text(
-                  'Sign up to get started',
-                  style: TextStyle(
-                    fontSize: 18.sp, // Responsive font size
-                    color: Colors.grey,
-                  ),
-                ),
-                SizedBox(height: 10.h),
-
-                // Name Input
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10.w),
-                  child: Text(
-                    "Name",
-                    style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 14.sp), // Responsive font size
-                  ),
-                ),
-                SizedBox(height: 10.h),
-                MyTextField(
-                  controller: nameController,
-                  hintText: "Enter full name",
-                  obscureText: false,
-                  prefixIcon: const Icon(Icons.person, color: Colors.grey),
-                ),
-                SizedBox(height: 10.h),
-
-                // Email Input
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10.w),
-                  child: Text(
-                    "Email",
-                    style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 14.sp), // Responsive font size
-                  ),
-                ),
-                SizedBox(height: 10.h),
-                MyTextField(
-                  controller: emailController,
-                  hintText: "Enter email",
-                  obscureText: false,
-                  prefixIcon: const Icon(Icons.email, color: Colors.grey),
-                ),
-                SizedBox(height: 10.h),
-
-                // Password Input
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10.w),
-                  child: Text(
-                    "Password",
-                    style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 14.sp), // Responsive font size
-                  ),
-                ),
-                SizedBox(height: 10.h),
-                MyTextField(
-                  controller: passwordController,
-                  hintText: "Enter password",
-                  obscureText: true,
-                  prefixIcon: const Icon(Icons.lock, color: Colors.grey),
-                ),
-                SizedBox(height: 10.h),
-
-                // Confirm Password Input
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10.w),
-                  child: Text(
-                    "Confirm Password",
-                    style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 14.sp), // Responsive font size
-                  ),
-                ),
-                SizedBox(height: 10.h),
-                MyTextField(
-                  controller: confirmPasswordController,
-                  hintText: "Re-enter password",
-                  obscureText: true,
-                  prefixIcon: const Icon(Icons.lock, color: Colors.grey),
-                ),
-                SizedBox(height: 20.h),
-
-                CustomElevatedButton(
-                  label: 'Sign Up',
-                  onPressed: () async {
-                    // Send OTP without creating Firebase account
-                    bool otpSent = await sendOtp(emailController.text);
-                    if (otpSent) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text("OTP has been sent to your email.")),
-                      );
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => EmailVerification(
-                            emailController.text,
-                            passwordController.text,
-                            nameController.text,
+                // Scrollable Content
+                Expanded(
+                  child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20.w,
+                        vertical: 30.h,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Center(
+                            child: Container(
+                              padding: EdgeInsets.all(15.w),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.2),
+                                    spreadRadius: 5,
+                                    blurRadius: 20,
+                                    offset: const Offset(0, 5),
+                                  )
+                                ],
+                              ),
+                              child: Lottie.asset(
+                                'lib/assets/lottie/Registration.json',
+                                width: 150.w,
+                                height: 150.h,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
                           ),
-                        ),
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Failed to send OTP.")),
-                      );
-                    }
-                  },
-                ),
-                SizedBox(height: 10.h),
+                          SizedBox(height: 20.h),
+                          Text(
+                            'Create Account',
+                            style: TextStyle(
+                              fontSize: 28.sp,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.white,
+                              letterSpacing: 0.8,
+                            ),
+                          ),
+                          SizedBox(height: 8.h),
+                          Text(
+                            'Sign up to get started',
+                            style: TextStyle(
+                              fontSize: 16.sp,
+                              color: Colors.white70,
+                              fontWeight: FontWeight.w300,
+                            ),
+                          ),
+                          SizedBox(height: 40.h),
 
-                // Already have an account? Login link
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("Already have an account?",
-                        style: TextStyle(
-                            fontSize: 14.sp,
-                            color: Colors.grey)), // Responsive font size
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => LoginPage()),
-                        );
-                      },
-                      child: const Text(
-                        " Login",
-                        style: TextStyle(
-                            color: Color.fromARGB(255, 155, 155, 155)),
+                          // Name Input
+                          _buildSectionTitle("Name"),
+                          SizedBox(height: 8.h),
+                          MyTextField(
+                            controller: nameController,
+                            hintText: "Enter full name",
+                            obscureText: false,
+                            prefixIcon: Icon(
+                              Icons.person,
+                              color: Colors.white70,
+                              size: 20.w,
+                            ),
+                          ),
+                          SizedBox(height: 20.h),
+
+                          // Email Input
+                          _buildSectionTitle("Email"),
+                          SizedBox(height: 8.h),
+                          MyTextField(
+                            controller: emailController,
+                            hintText: "Enter email",
+                            obscureText: false,
+                            prefixIcon: Icon(
+                              Icons.email,
+                              color: Colors.white70,
+                              size: 20.w,
+                            ),
+                          ),
+                          SizedBox(height: 20.h),
+
+                          // Password Input
+                          _buildSectionTitle("Password"),
+                          SizedBox(height: 8.h),
+                          MyTextField(
+                            controller: passwordController,
+                            hintText: "Enter password",
+                            obscureText: true,
+                            prefixIcon: Icon(
+                              Icons.lock,
+                              color: Colors.white70,
+                              size: 20.w,
+                            ),
+                          ),
+                          SizedBox(height: 20.h),
+
+                          // Confirm Password Input
+                          _buildSectionTitle("Confirm Password"),
+                          SizedBox(height: 8.h),
+                          MyTextField(
+                            controller: confirmPasswordController,
+                            hintText: "Re-enter password",
+                            obscureText: true,
+                            prefixIcon: Icon(
+                              Icons.lock,
+                              color: Colors.white70,
+                              size: 20.w,
+                            ),
+                          ),
+                          SizedBox(height: 20.h),
+                        ],
                       ),
                     ),
-                  ],
+                  ),
+                ),
+
+                // Fixed Bottom Section
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20.w,
+                    vertical: 20.h,
+                  ),
+                  child: Column(
+                    children: [
+                      CustomElevatedButton(
+                        label: 'Sign Up',
+                        onPressed: () async {
+                          if (passwordController.text !=
+                              confirmPasswordController.text) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text("Passwords do not match")),
+                            );
+                            return;
+                          }
+
+                          bool otpSent = await sendOtp(emailController.text);
+                          if (otpSent) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EmailVerification(
+                                  emailController.text,
+                                  passwordController.text,
+                                  nameController.text,
+                                ),
+                              ),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text("Failed to send OTP")),
+                            );
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor:
+                              const Color.fromARGB(255, 137, 74, 226),
+                        ),
+                      ),
+                      SizedBox(height: 15.h),
+                      TextButton(
+                        onPressed: () => Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => LoginPage()),
+                        ),
+                        child: RichText(
+                          text: TextSpan(
+                            text: "Already have an account? ",
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 14.sp,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: 'Login',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                  decoration: TextDecoration.underline,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
-            ),
-          ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Padding(
+      padding: EdgeInsets.only(left: 8.w),
+      child: Text(
+        title,
+        style: TextStyle(
+          color: Colors.white70,
+          fontSize: 14.sp,
+          fontWeight: FontWeight.w500,
+          letterSpacing: 0.4,
         ),
       ),
     );
