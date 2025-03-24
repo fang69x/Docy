@@ -5,7 +5,7 @@ class BannerCard extends StatelessWidget {
   final String title;
   final String subtitle;
 
-  BannerCard({required this.title, required this.subtitle});
+  const BannerCard({super.key, required this.title, required this.subtitle});
 
   @override
   Widget build(BuildContext context) {
@@ -15,8 +15,8 @@ class BannerCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(15),
       ),
       child: Container(
-        width: 300.w, // Adjust width of each banner card
-        padding: EdgeInsets.all(16.0.w),
+        width: 400.w,
+        padding: EdgeInsets.all(20.w),
         decoration: BoxDecoration(
           gradient: const LinearGradient(
             colors: [
@@ -30,21 +30,60 @@ class BannerCard extends StatelessWidget {
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 24.sp,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
+            Row(
+              children: [
+                Icon(
+                  Icons.document_scanner_rounded,
+                  color: Colors.white.withOpacity(0.8),
+                  size: 25.sp,
+                ),
+                SizedBox(width: 10.w),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.white,
+                      letterSpacing: 0.8,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
             ),
-            SizedBox(height: 10.h),
+            SizedBox(height: 5.h),
             Text(
               subtitle,
               style: TextStyle(
-                fontSize: 14.sp,
+                fontSize: 13.sp,
                 color: Colors.white70,
+                fontWeight: FontWeight.w300,
+                height: 1.5,
+              ),
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+            ),
+            SizedBox(height: 5.h),
+            Align(
+              alignment: Alignment.centerRight,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 2.h),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  'Learn More',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ),
             ),
           ],
