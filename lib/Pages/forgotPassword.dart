@@ -1,3 +1,4 @@
+import 'package:docy/Pages/textform.dart';
 import 'package:docy/buttons/customelevated.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -23,7 +24,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
     _animationController = AnimationController(
       duration: const Duration(seconds: 2),
       vsync: this,
-    )..forward(); // Ensure this is initialized before usage
+    )..forward();
   }
 
   @override
@@ -100,9 +101,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
                   style: TextStyle(color: Color.fromARGB(179, 218, 215, 215)),
                 ),
                 const SizedBox(height: 20),
-                TextField(
+                MyTextField(
                   controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: Colors.white,
@@ -113,6 +113,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage>
                       borderRadius: BorderRadius.circular(30.0),
                     ),
                   ),
+                  hintText: 'Enter your registered email id',
+                  obscureText: true,
                 ),
                 const SizedBox(height: 20),
                 CustomElevatedButton(
