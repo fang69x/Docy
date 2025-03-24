@@ -5,6 +5,7 @@ import 'package:docy/Pages/profile.dart';
 import 'package:docy/Pages/scan_doc.dart';
 import 'package:docy/Pages/searchPage.dart';
 import 'package:docy/Pages/setting_page.dart';
+import 'package:docy/tile/bannercard.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,7 +15,10 @@ import 'package:docy/Pages/scan.dart';
 import 'package:docy/Pages/upload_doc.dart';
 import 'package:docy/tile/homepagetile.dart';
 import 'package:docy/Pages/textform.dart';
+import 'package:animate_do/animate_do.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
+// Bottom Navigation Index Provider
 final bottomNavIndexProvider = StateProvider<int>((ref) => 0);
 
 class HomePage extends ConsumerStatefulWidget {
@@ -26,15 +30,48 @@ class HomePage extends ConsumerStatefulWidget {
 
 class _HomePageState extends ConsumerState<HomePage>
     with TickerProviderStateMixin {
+  // User details
   String userName = "";
+  String userEmail = "";
+  String userProfilePic = "";
+
+  // Page and animation controllers
   late PageController _pageController;
   late Timer _timer;
   late AnimationController _fabController;
 
+  // Banner data
+  final List<Map<String, dynamic>> _bannerData = [
+    {
+      'title': 'Effortless Document Management',
+      'subtitle':
+          'Organize, store, and access your documents with ease and precision.',
+      'icon': Icons.storage_rounded,
+    },
+    {
+      'title': 'Instant Document Scanning',
+      'subtitle':
+          'Transform physical documents into digital files with just a tap.',
+      'icon': Icons.document_scanner_rounded,
+    },
+    {
+      'title': 'Secure Cloud Storage',
+      'subtitle':
+          'Your documents are safely stored and accessible from anywhere.',
+      'icon': Icons.cloud_done_rounded,
+    },
+    {
+      'title': 'Smart Search Capabilities',
+      'subtitle':
+          'Find any document instantly with our advanced search technology.',
+      'icon': Icons.search_rounded,
+    },
+  ];
+
   @override
   void initState() {
     super.initState();
-    _fetchUserName();
+    _fetchUserDetails();
     _pageController = PageController(viewportFraction: 0.85);
     _startAutoScroll();
     _fabController = AnimationController(
@@ -43,19 +80,23 @@ class _HomePageState extends ConsumerState<HomePage>
     )..forward();
   }
 
-  void _fetchUserName() {
+  // Fetch current user details
+  void _fetchUserDetails() {
     final user = FirebaseAuth.instance.currentUser;
     setState(() {
       userName = user?.displayName ?? 'Guest';
+      userEmail = user?.email ?? '';
+      userProfilePic = user?.photoURL ?? '';
     });
   }
 
+  // Auto-scroll for banner
   void _startAutoScroll() {
     _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
       if (_pageController.hasClients) {
         final nextPage = (_pageController.page?.toInt() ?? 0) + 1;
         _pageController.animateToPage(
-          nextPage % 5,
+          nextPage % _bannerData.length,
           duration: const Duration(milliseconds: 800),
           curve: Curves.easeInOutQuint,
         );
@@ -63,61 +104,86 @@ class _HomePageState extends ConsumerState<HomePage>
     });
   }
 
+  // Create new folder dialog
   Future<void> _addFolder() async {
     final folderNameController = TextEditingController();
     final userId = FirebaseAuth.instance.currentUser?.uid;
 
     showDialog(
       context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Add Folder'),
-          content: MyTextField(
-            controller: folderNameController,
-            hintText: 'Folder Name',
-            obscureText: false,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        title: Text(
+          'Create New Folder',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.deepPurple,
+            fontSize: 20.sp,
           ),
-          actions: [
-            TextButton(
-              onPressed: () async {
-                final folderName = folderNameController.text.trim();
-                if (folderName.isNotEmpty && userId != null) {
-                  try {
-                    await FirebaseFirestore.instance.collection('folders').add({
-                      'name': folderName,
-                      'userId': userId,
-                      'createdAt': FieldValue.serverTimestamp(),
-                    });
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                          content: Text('Folder created successfully')),
-                    );
-                  } catch (e) {
-                    Navigator.pop(context);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Error: $e')),
-                    );
-                  }
-                } else {
+        ),
+        content: MyTextField(
+          controller: folderNameController,
+          hintText: 'Folder Name',
+          obscureText: false,
+        ),
+        actions: [
+          TextButton(
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.deepPurple,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+            onPressed: () async {
+              final folderName = folderNameController.text.trim();
+              if (folderName.isNotEmpty && userId != null) {
+                try {
+                  await FirebaseFirestore.instance.collection('folders').add({
+                    'name': folderName,
+                    'userId': userId,
+                    'createdAt': FieldValue.serverTimestamp(),
+                  });
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Please enter a folder name')),
+                    SnackBar(
+                      content:
+                          Text('Folder "$folderName" created successfully'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+                } catch (e) {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Error: $e'),
+                      backgroundColor: Colors.red,
+                    ),
                   );
                 }
-              },
-              child: const Text('Add'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text('Cancel'),
-            ),
-          ],
-        );
-      },
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Please enter a folder name'),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+            },
+            child: const Text('Create'),
+          ),
+        ],
+      ),
     );
   }
 
+  // Cleanup timers and controllers
   @override
   void dispose() {
     _timer.cancel();
@@ -126,34 +192,45 @@ class _HomePageState extends ConsumerState<HomePage>
     super.dispose();
   }
 
+  // Build method for the home page
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
       body: IndexedStack(
         index: ref.watch(bottomNavIndexProvider),
-        children: const [
-          _HomeContent(),
-          SearchPage(),
-          SettingPage(),
-          ProfilePage(),
+        children: [
+          _HomeContent(
+            userName: userName,
+            userEmail: userEmail,
+            userProfilePic: userProfilePic,
+            onAddFolder: _addFolder,
+            bannerData: _bannerData,
+          ),
+          const SearchPage(),
+          const SettingPage(),
+          const ProfilePage(),
         ],
       ),
       bottomNavigationBar: _buildBottomNavBar(),
-      floatingActionButton: ScaleTransition(
-        scale: CurvedAnimation(
-          parent: _fabController,
-          curve: Curves.easeOutBack,
-        ),
-        child: FloatingActionButton(
-          onPressed: _showActionDialog,
-          backgroundColor: Colors.deepPurple,
-          child: const Icon(Icons.add, color: Colors.white),
+      floatingActionButton: FadeInUp(
+        child: ScaleTransition(
+          scale: CurvedAnimation(
+            parent: _fabController,
+            curve: Curves.easeOutBack,
+          ),
+          child: FloatingActionButton(
+            onPressed: _showActionDialog,
+            backgroundColor: Colors.deepPurple,
+            elevation: 10,
+            child: const Icon(Icons.add, color: Colors.white),
+          ),
         ),
       ),
     );
   }
 
+  // Bottom navigation bar
   Widget _buildBottomNavBar() {
     return SalomonBottomBar(
       currentIndex: ref.watch(bottomNavIndexProvider),
@@ -183,33 +260,53 @@ class _HomePageState extends ConsumerState<HomePage>
     );
   }
 
+  // Action dialog for adding documents
   void _showActionDialog() {
-    showDialog(
+    showModalBottomSheet(
       context: context,
-      builder: (context) => Dialog(
-        backgroundColor: Colors.transparent,
+      backgroundColor: Colors.transparent,
+      builder: (context) => Container(
+        padding: EdgeInsets.all(20.w),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(30.r)),
+        ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _buildDialogButton(
-              icon: Icons.camera_alt_rounded,
-              label: "Scan Document",
-              color: Colors.deepPurple,
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => DocumentScannerPage()),
+            Text(
+              'Choose Action',
+              style: TextStyle(
+                fontSize: 22.sp,
+                fontWeight: FontWeight.bold,
+                color: Colors.deepPurple,
               ),
             ),
-            SizedBox(height: 16.h),
-            _buildDialogButton(
-              icon: Icons.upload_rounded,
-              label: "Upload File",
-              color: Colors.blueAccent,
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const AddDocumentPage()),
-              ),
+            SizedBox(height: 20.h),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _buildActionButton(
+                  icon: Icons.document_scanner,
+                  label: 'Scan',
+                  color: Colors.deepPurple,
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => DocumentScannerPage()),
+                  ),
+                ),
+                _buildActionButton(
+                  icon: Icons.upload_file,
+                  label: 'Upload',
+                  color: Colors.blueAccent,
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const AddDocumentPage()),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -217,54 +314,54 @@ class _HomePageState extends ConsumerState<HomePage>
     );
   }
 
-  Widget _buildDialogButton({
+  // Action button builder
+  Widget _buildActionButton({
     required IconData icon,
     required String label,
     required Color color,
     required VoidCallback onTap,
   }) {
-    return Material(
-      elevation: 8,
-      borderRadius: BorderRadius.circular(16.r),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16.r),
-        onTap: () {
-          Navigator.pop(context);
-          onTap();
-        },
-        child: Container(
-          width: double.infinity,
-          padding: EdgeInsets.all(24.w),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [color, color.withOpacity(0.7)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-            borderRadius: BorderRadius.circular(16.r),
+    return Column(
+      children: [
+        ElevatedButton(
+          onPressed: onTap,
+          style: ElevatedButton.styleFrom(
+            backgroundColor: color,
+            shape: CircleBorder(),
+            padding: EdgeInsets.all(20.w),
+            elevation: 5,
           ),
-          child: Column(
-            children: [
-              Icon(icon, size: 40.w, color: Colors.white),
-              SizedBox(height: 12.h),
-              Text(
-                label,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
+          child: Icon(icon, color: Colors.white, size: 30.w),
+        ),
+        SizedBox(height: 10.h),
+        Text(
+          label,
+          style: TextStyle(
+            color: color,
+            fontWeight: FontWeight.bold,
+            fontSize: 16.sp,
           ),
         ),
-      ),
+      ],
     );
   }
 }
 
+// Home Content Widget
 class _HomeContent extends StatelessWidget {
-  const _HomeContent();
+  final String userName;
+  final String userEmail;
+  final String userProfilePic;
+  final VoidCallback onAddFolder;
+  final List<Map<String, dynamic>> bannerData;
+
+  const _HomeContent({
+    required this.userName,
+    required this.userEmail,
+    required this.userProfilePic,
+    required this.onAddFolder,
+    required this.bannerData,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -272,10 +369,10 @@ class _HomeContent extends StatelessWidget {
       physics: const BouncingScrollPhysics(),
       slivers: [
         SliverAppBar(
-          expandedHeight: 320.h,
+          expandedHeight: 380.h,
           flexibleSpace: FlexibleSpaceBar(
             background: Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [Color(0xFF6C5CE7), Color(0xFF1A1A2E)],
                   begin: Alignment.topLeft,
@@ -287,29 +384,25 @@ class _HomeContent extends StatelessWidget {
                   SizedBox(height: kToolbarHeight * 1.5),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 24.w),
-                    child: const _Header(),
+                    child: _Header(
+                      userName: userName,
+                      userEmail: userEmail,
+                      userProfilePic: userProfilePic,
+                    ),
                   ),
                   SizedBox(height: 32.h),
                   SizedBox(
                     height: 180.h,
                     child: PageView.builder(
-                      itemCount: 5,
-                      itemBuilder: (context, index) => Container(
-                        margin: EdgeInsets.symmetric(horizontal: 8.w),
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(16.r),
-                          color: Colors.white.withOpacity(0.1),
-                        ),
-                        child: Center(
-                          child: Text(
-                            "Banner ${index + 1}",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 24.sp,
-                            ),
-                          ),
-                        ),
-                      ),
+                      controller: PageController(viewportFraction: 0.85),
+                      itemCount: bannerData.length,
+                      itemBuilder: (context, index) {
+                        final banner = bannerData[index];
+                        return BannerCard(
+                          title: banner['title'],
+                          subtitle: banner['subtitle'],
+                        );
+                      },
                     ),
                   ),
                 ],
@@ -322,26 +415,27 @@ class _HomeContent extends StatelessWidget {
           sliver: SliverList(
             delegate: SliverChildListDelegate([
               ElevatedButton(
-                onPressed: () => _HomePageState()._addFolder(),
+                onPressed: onAddFolder,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.deepPurple,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.r),
+                    borderRadius: BorderRadius.circular(15.r),
                   ),
                   padding:
                       EdgeInsets.symmetric(vertical: 15.h, horizontal: 10.w),
                 ),
                 child: Row(
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.create_new_folder, color: Colors.white),
-                    SizedBox(width: 8.0.w),
+                    Icon(Icons.create_new_folder,
+                        color: Colors.white, size: 28.w),
+                    SizedBox(width: 12.w),
                     Text(
-                      'Create Folder',
+                      'Create New Folder',
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
-                        fontSize: 16.sp,
+                        fontSize: 18.sp,
                       ),
                     ),
                   ],
@@ -357,7 +451,7 @@ class _HomeContent extends StatelessWidget {
                 children: [
                   HomeTile(
                     name: 'Scanned Documents',
-                    icon: const Icon(Icons.edit_document,
+                    icon: const Icon(Icons.document_scanner_rounded,
                         color: Colors.deepPurple),
                     onTap: () => Navigator.push(
                       context,
@@ -367,8 +461,8 @@ class _HomeContent extends StatelessWidget {
                   ),
                   HomeTile(
                     name: 'Uploaded Documents',
-                    icon:
-                        const Icon(Icons.camera_alt, color: Colors.deepPurple),
+                    icon: const Icon(Icons.cloud_upload_rounded,
+                        color: Colors.blueAccent),
                     onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -385,42 +479,69 @@ class _HomeContent extends StatelessWidget {
   }
 }
 
+// Header Widget
 class _Header extends StatelessWidget {
-  const _Header();
+  final String userName;
+  final String userEmail;
+  final String userProfilePic;
+
+  const _Header({
+    required this.userName,
+    required this.userEmail,
+    required this.userProfilePic,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Welcome Back,",
-              style: TextStyle(
-                color: Colors.white70,
-                fontSize: 16.sp,
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "Welcome Back,",
+                style: TextStyle(
+                  color: Colors.white70,
+                  fontSize: 16.sp,
+                ),
               ),
-            ),
-            Text(
-              "User Name",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 24.sp,
-                fontWeight: FontWeight.w700,
+              Text(
+                userName,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 24.sp,
+                  fontWeight: FontWeight.w700,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
-            ),
-          ],
-        ),
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.1),
-            shape: BoxShape.circle,
+            ],
           ),
-          child: IconButton(
-            icon: Icon(Icons.notifications_none_rounded, color: Colors.white),
-            onPressed: () {},
+        ),
+        GestureDetector(
+          onTap: () {
+            // TODO: Implement profile or notification actions
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: CircleAvatar(
+              radius: 25.r,
+              backgroundColor: Colors.transparent,
+              backgroundImage: userProfilePic.isNotEmpty
+                  ? CachedNetworkImageProvider(userProfilePic)
+                  : null,
+              child: userProfilePic.isEmpty
+                  ? Icon(
+                      Icons.person,
+                      color: Colors.white,
+                      size: 30.w,
+                    )
+                  : null,
+            ),
           ),
         ),
       ],
