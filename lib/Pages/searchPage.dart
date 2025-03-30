@@ -14,67 +14,58 @@ class SearchPage extends ConsumerStatefulWidget {
 class _SearchPageState extends ConsumerState<SearchPage> {
   final TextEditingController _searchController = TextEditingController();
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
   String getCurrentUserId() {
     final User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      return user.uid;
-    } else {
-      return '';
-    }
+    return user?.uid ?? '';
   }
 
-  // Function that is triggered when the search query changes or button is clicked
   void _search() {
-    String query = _searchController.text;
-    String userId = getCurrentUserId();
-    // Calling Riverpod provider function to search for files
-    ref.read(searchResultsProvider.notifier).searchFilesByUser(
-        userId, query); // Use ref.read instead of context.read
+    String query = _searchController.text.trim();
+    if (query.isNotEmpty) {
+      String userId = getCurrentUserId();
+      ref.read(searchResultsProvider.notifier).searchFilesByUser(userId, query);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final searchState =
-        ref.watch(searchResultsProvider); // Watching the search results
+    final searchState = ref.watch(searchResultsProvider);
 
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              Color.fromARGB(255, 137, 74, 226),
-              Color.fromARGB(255, 1, 10, 26)
-            ],
+            colors: [Color(0xFF894AE2), Color(0xFF010A1A)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 50.h),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 100),
-
+              Text(
+                "Search Files",
+                style: TextStyle(
+                    fontSize: 26.sp,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
+              ),
+              SizedBox(height: 20.h),
               _buildSearchBar(),
-              const SizedBox(height: 20),
-              _buildSearchButton(), // Add the search button here
-              const SizedBox(height: 20),
-              if (searchState.isLoading)
-                const Center(
-                    child:
-                        CircularProgressIndicator()) // Show loading indicator
-              else if (searchState.error.isNotEmpty)
-                _buildError(searchState.error) // Show error message
-              else if (searchState.results.isEmpty)
-                _buildNoResults() // Show no results message
-              else
-                _buildSearchResults(searchState.results), // Show search results
+              SizedBox(height: 15.h),
+              _buildSearchButton(),
+              SizedBox(height: 20.h),
+              Expanded(
+                child: searchState.isLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : searchState.error.isNotEmpty
+                        ? _buildError(searchState.error)
+                        : searchState.results.isEmpty
+                            ? _buildNoResults()
+                            : _buildSearchResults(searchState.results),
+              ),
             ],
           ),
         ),
@@ -85,83 +76,83 @@ class _SearchPageState extends ConsumerState<SearchPage> {
   Widget _buildSearchBar() {
     return TextField(
       controller: _searchController,
+      style: TextStyle(fontSize: 16.sp, color: Colors.black87),
       decoration: InputDecoration(
-        hintText: 'Search here...',
-        hintStyle: TextStyle(color: Colors.grey.shade500),
+        hintText: 'Search files...',
+        hintStyle: TextStyle(color: Colors.grey.shade600, fontSize: 16.sp),
         prefixIcon: const Icon(Icons.search, color: Colors.deepPurple),
         filled: true,
-        fillColor: Colors.deepPurple.shade50,
+        fillColor: Colors.white,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(12.r),
           borderSide: BorderSide.none,
         ),
-        contentPadding:
-            const EdgeInsets.symmetric(vertical: 14.0, horizontal: 16.0),
+        contentPadding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 16.w),
       ),
     );
   }
 
-  // Add the search button
   Widget _buildSearchButton() {
-    return ElevatedButton(
-      onPressed: _search, // Trigger the search when the button is pressed
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.deepPurple, // Button color
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: _search,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.deepPurple,
+          padding: EdgeInsets.symmetric(vertical: 14.h),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.r),
+          ),
         ),
+        child: Text('Search',
+            style: TextStyle(
+                fontSize: 18.sp,
+                color: Colors.white,
+                fontWeight: FontWeight.bold)),
       ),
-      child: const Text('Search',
-          style: TextStyle(fontSize: 18, color: Colors.white)),
     );
   }
 
   Widget _buildNoResults() {
-    return Expanded(
-      child: Center(
-        child: Text(
-          'No results found.',
-          style: TextStyle(fontSize: 18, color: Colors.deepPurple.shade600),
-        ),
+    return Center(
+      child: Text(
+        'No results found.',
+        style: TextStyle(fontSize: 18.sp, color: Colors.grey.shade300),
       ),
     );
   }
 
   Widget _buildError(String error) {
-    return Expanded(
-      child: Center(
-        child: Text(
-          error,
-          style: TextStyle(fontSize: 18, color: Colors.red.shade600),
-        ),
+    return Center(
+      child: Text(
+        error,
+        style: TextStyle(fontSize: 18.sp, color: Colors.red.shade600),
       ),
     );
   }
 
   Widget _buildSearchResults(List<String> results) {
-    return Expanded(
-      child: ListView.builder(
-        itemCount: results.length,
-        itemBuilder: (context, index) {
-          return _buildSearchResultItem(results[index]);
-        },
-      ),
+    return ListView.builder(
+      itemCount: results.length,
+      itemBuilder: (context, index) {
+        return _buildSearchResultItem(results[index]);
+      },
     );
   }
 
   Widget _buildSearchResultItem(String result) {
     return Card(
-      elevation: 4,
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 3,
+      margin: EdgeInsets.symmetric(vertical: 6.h, horizontal: 5.w),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.r)),
       child: ListTile(
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-        leading: const Icon(Icons.search, color: Colors.deepPurple, size: 28),
-        title: Text(result, style: const TextStyle(fontSize: 18)),
+        contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+        leading: const Icon(Icons.insert_drive_file,
+            color: Colors.deepPurple, size: 28),
+        title: Text(result,
+            style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w500)),
         onTap: () {
-          // Handle item tap, navigate to result details or perform action
+          // Handle item tap
         },
       ),
     );
